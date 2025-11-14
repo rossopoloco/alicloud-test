@@ -7,7 +7,7 @@ resource "alicloud_db_instance" "pg" {
   vswitch_id             = alicloud_vswitch.this.id
   security_ips           = [alicloud_vpc.this.cidr_block]
   instance_name          = "${var.name_prefix}-${var.env}-pg"
-  pay_type               = "Postpaid"
+  payment_type                = "Postpaid"
   db_instance_storage_type = "cloud_essd"
   tags = local.tags
 }
@@ -27,3 +27,4 @@ resource "alicloud_db_database" "app" {
   # PostgreSQL 通常用 UTF8，若需要显式指定，用下面这一行；不需要可以删掉
   # character_set = "UTF8"
 }
+
