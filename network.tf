@@ -1,47 +1,50 @@
-resource "alicloud_vpc" "main" {
-  vpc_name   = "${var.env}-vpc"
-  cidr_block = local.cfg.vpc_cidr
+resource "alicloud_vpc" "this" {
+  vpc_name   = "${var.name_prefix}-${var.env}-vpc"
+  cidr_block = var.vpc_cidr
+  tags       = local.tags
 }
-resource "alicloud_vswitch" "main" {
-  vswitch_name = "${var.env}-vsw-a"
-  vpc_id       = alicloud_vpc.main.id
-  cidr_block   = local.cfg.vsw_cidr
-  zone_id      = local.cfg.zone_id
+
+resource "alicloud_vswitch" "this" {
+  vswitch_name = "${var.name_prefix}-${var.env}-vsw-a"
+  cidr_block   = var.vsw_cidr
+  zone_id      = data.alicloud_zones.this.zones[0].id
+  vpc_id       = alicloud_vpc.this.id
+  tags         = local.tags
 }
-resource "alicloud_security_group" "web" {
-  name        = "${var.env}-sg-web"
-  vpc_id      = alicloud_vpc.main.id
-  description = "web sg"
+
+resource "alicloud_security_group" "this" {
+  name   = "${var.name_prefix}-${var.env}-sg"
+  vpc_id = alicloud_vpc.this.id
+  tags   = local.tags
 }
-80/443 放行（Test 先放通，Prod 再收口）
-resource "alicloud_security_group_rule" "web_http" {
+
+# 允许 SSH 和 HTTP/HTTPS（示例）
+resource "alicloud_security_group_rule" "ingress_ssh" {
   type              = "ingress"
   ip_protocol       = "tcp"
   nic_type          = "intranet"
   policy            = "accept"
-  port_range        = "80/80"
+  port_range        = "22/22"
   priority          = 1
-  security_group_id = alicloud_security_group.web.id
+  security_group_id = alicloud_security_group.this.id
   cidr_ip           = "0.0.0.0/0"
 }
-resource "alicloud_security_group_rule" "web_https" {
+
+resource "alicloud_security_group_rule" "ingress_web" {
   type              = "ingress"
   ip_protocol       = "tcp"
   nic_type          = "intranet"
   policy            = "accept"
-  port_range        = "443/443"
+  port_range        = "80/443"
   priority          = 2
-  security_group_id = alicloud_security_group.web.id
+  security_group_id = alicloud_security_group.this.id
   cidr_ip           = "0.0.0.0/0"
 }
-出站全开（按需收口）
-resource "alicloud_security_group_rule" "egress_all" {
-  type              = "egress"
-  ip_protocol       = "all"
-  nic_type          = "intranet"
-  policy            = "accept"
-  port_range        = "-1/-1"
-  priority          = 100
-  security_group_id = alicloud_security_group.web.id
-  cidr_ip           = "0.0.0.0/0"
+
+# EIP（公网出口）
+resource "alicloud_eip_address" "this" {
+  address_name = "${var.name_prefix}-${var.env}-eip"
+  bandwidth    = var.eip_bandwidth_mbps
+  internet_charge_type = "PayByTraffic"
+  tags = local.tags
 }
