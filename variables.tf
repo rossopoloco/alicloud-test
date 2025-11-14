@@ -1,42 +1,84 @@
 variable "region" {
-  type    = string
-  default = "cn-wulanchabu"
+  type        = string
+  description = "Region id, e.g. cn-wulanchabu"
+  default     = "cn-wulanchabu"
 }
+
 variable "env" {
-  type    = string
-  default = "test" # 先跑 test，之后 prod
+  type        = string
+  description = "Environment name: test | prod"
 }
-locals {
-分环境参数（可按你的表增改）
-  settings = {
-    test = {
-      vpc_cidr        = "10.10.0.0/16"
-      vsw_cidr        = "10.10.1.0/24"
-      zone_id         = "cn-wulanchabu-a" # 按你的账号可用区改
-      eip_bandwidth   = 2                 # Mbps
-      ecs_count       = 1
-      ecs_type        = "ecs.u1-c1m4.large" # 2c8g
-      ecs_sys_disk_gb = 40
-      oss_capacity_gb = 40
-      pg_edition      = "Basic"          # 基础版
-      pg_class        = "pg.n2.2c.1m"    # 2c ~4GiB
-      pg_engine_ver   = "14"             # PG 17若不可选可用14/15
-      pg_storage_gb   = 20
-    }
-    prod = {
-      vpc_cidr        = "10.20.0.0/16"
-      vsw_cidr        = "10.20.1.0/24"
-      zone_id         = "cn-wulanchabu-a"
-      eip_bandwidth   = 10
-      ecs_count       = 2
-      ecs_type        = "ecs.u1-c1m4.large"
-      ecs_sys_disk_gb = 40
-      oss_capacity_gb = 100
-      pg_edition      = "HighAvailability"
-      pg_class        = "pg.n4.2c.2m"    # 2c ~8GiB
-      pg_engine_ver   = "14"
-      pg_storage_gb   = 50
-    }
-  }
-  cfg = local.settings[var.env]
+
+variable "name_prefix" {
+  type        = string
+  description = "Resource name prefix"
+  default     = "demo"
+}
+
+variable "vpc_cidr" {
+  type        = string
+  default     = "10.20.0.0/16"
+}
+
+variable "vsw_cidr" {
+  type        = string
+  default     = "10.20.1.0/24"
+}
+
+variable "eip_bandwidth_mbps" {
+  type        = number
+  description = "Public EIP bandwidth cap"
+  default     = 2
+}
+
+# ECS
+variable "ecs_instance_count" {
+  type = number
+  default = 1
+}
+
+variable "ecs_instance_type" {
+  type        = string
+  # 你表里的：ecs.u1-c1m4.large  (2vCPU/8GiB)
+  default     = "ecs.u1-c1m4.large"
+}
+
+variable "ecs_image_id" {
+  type        = string
+  description = "Image id; empty to use latest Ubuntu 22.04"
+  default     = ""
+}
+
+# RDS PostgreSQL
+variable "pg_engine_version" {
+  type    = string
+  default = "17"
+}
+
+variable "pg_instance_class" {
+  type        = string
+  description = "规格，如 pg.n2.2c.1m / pg.n4.2c.2m"
+  default     = "pg.n2.2c.1m"
+}
+
+variable "pg_storage_gib" {
+  type    = number
+  default = 20
+}
+
+# ALB
+variable "enable_alb" {
+  type    = bool
+  default = false
+}
+
+variable "alb_bandwidth_mbps" {
+  type    = number
+  default = 10
+}
+
+# WAF（占位）
+variable "enable_waf" {
+  type    = bool
+  default = false
 }
