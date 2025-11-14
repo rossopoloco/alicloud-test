@@ -9,7 +9,3 @@ locals {
 data "alicloud_zones" "this" {
   available_resource_creation = "VSwitch"
 }
-
-module "network" {
-  source = "./network"
-}
