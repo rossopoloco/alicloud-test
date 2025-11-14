@@ -1,30 +1,26 @@
-找一张可用的官方 Linux 镜像
-data "alicloud_images" "linux" {
+# 找一个常见镜像（如未指定）
+data "alicloud_images" "ubuntu" {
+  name_regex = "ubuntu_22.*64"
   most_recent = true
-  owners      = "system"
-  os_type     = "linux"
 }
-resource "alicloud_instance" "web" {
-  count                = local.cfg.ecs_count
-  instance_name        = "
-${var.env}-web-$
-{count.index}"
-  image_id             = data.alicloud_images.linux.images[0].id
-  instance_type        = local.cfg.ecs_type
-  vswitch_id           = alicloud_vswitch.main.id
-  security_groups      = [alicloud_security_group.web.id]
-  internet_max_bandwidth_out = 0 # 走 EIP；这里留 0
-  system_disk_category = "cloud_essd"
-  system_disk_size     = local.cfg.ecs_sys_disk_gb
-初期允许密码（安全起见建议用 KeyPair）
-  password             = "ChangeMe_123!"
+
+resource "random_pet" "suffix" {}
+
+resource "alicloud_instance" "ecs" {
+  count                      = var.ecs_instance_count
+  instance_name              = "${var.name_prefix}-${var.env}-ecs-${count.index}-${random_pet.suffix.id}"
+  instance_type              = var.ecs_instance_type
+  security_groups            = [alicloud_security_group.this.id]
+  vswitch_id                 = alicloud_vswitch.this.id
+  image_id                   = var.ecs_image_id != "" ? var.ecs_image_id : data.alicloud_images.ubuntu.images[0].id
+  system_disk_category       = "cloud_essd"
+  internet_max_bandwidth_out = 0 # 走 EIP 绑定 ENI 时设置 0
+
+  tags = local.tags
 }
-EIP（Test 2Mbps）
-resource "alicloud_eip" "pub" {
-  bandwidth = local.cfg.eip_bandwidth
-}
-绑定 EIP 到第一台 ECS（Test）
-resource "alicloud_eip_association" "pub_to_ecs0" {
-  instance_id   = alicloud_instance.web[0].id
-  allocation_id = alicloud_eip.pub.id
+
+# 将 EIP 绑定到第一台 ECS 的主 ENI（演示）
+resource "alicloud_eip_association" "ecs0" {
+  allocation_id = alicloud_eip_address.this.id
+  instance_id   = alicloud_instance.ecs[0].id
 }
