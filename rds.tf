@@ -13,7 +13,7 @@ resource "alicloud_db_instance" "pg" {
 
 # 账号 —— rds -> db
 resource "alicloud_db_account" "pgadmin" {
-  instance_id      = alicloud_db_instance.pg.id
+  db_instance_id      = alicloud_db_instance.pg.id
   account_name     = "pgadmin"
   account_password = "P@ssw0rd-ChangeMe"
 }
@@ -21,10 +21,11 @@ resource "alicloud_db_account" "pgadmin" {
 # 数据库 —— rds -> db
 # 注意：老字段 character_set_name 已不推荐，直接去掉或用 character_set。
 resource "alicloud_db_database" "app" {
-  instance_id   = alicloud_db_instance.pg.id
+  db_instance_id   = alicloud_db_instance.pg.id
   name          = "appdb"
   # PostgreSQL 通常用 UTF8，若需要显式指定，用下面这一行；不需要可以删掉
   # character_set = "UTF8"
 }
+
 
 
