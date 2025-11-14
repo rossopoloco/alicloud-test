@@ -13,7 +13,7 @@ resource "alicloud_vswitch" "this" {
 }
 
 resource "alicloud_security_group" "this" {
-  name   = "${var.name_prefix}-${var.env}-sg"
+  security_group_name = "${var.name_prefix}-${var.env}-sg"
   vpc_id = alicloud_vpc.this.id
   tags   = local.tags
 }
@@ -48,3 +48,4 @@ resource "alicloud_eip_address" "this" {
   internet_charge_type = "PayByTraffic"
   tags = local.tags
 }
+
