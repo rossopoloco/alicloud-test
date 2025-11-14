@@ -1,32 +1,33 @@
-RDS for PostgreSQL
+# PostgreSQL 实例
 resource "alicloud_db_instance" "pg" {
   engine           = "PostgreSQL"
-  engine_version   = local.cfg.pg_engine_ver
-  instance_type    = local.cfg.pg_class
-  db_instance_storage = local.cfg.pg_storage_gb
-  instance_charge_type = "PostPaid"    # 先按量，跑通后可包年包月
-  vswitch_id       = alicloud_vswitch.main.id
-  security_ips     = ["0.0.0.0/0"]     # Test先开，Prod请收口为内网网段
-基础/高可用
-  category         = local.cfg.pg_edition  # "Basic" or "HighAvailability"
-自动备份策略（可按需调整）
-  maintain_time    = "01:00Z-02:00Z"
+  engine_version   = var.pg_engine_version
+  instance_type    = var.pg_instance_class
+  instance_storage = var.pg_storage_gib
+
+  vswitch_id = alicloud_vswitch.this.id
+  security_ips = [
+    alicloud_vpc.this.cidr_block
+  ]
+
+  instance_name = "${var.name_prefix}-${var.env}-pg"
+  pay_type      = "Postpaid"
+
+  # test 选 Basic, prod 可切到 HighAvailability
+  db_instance_storage_type = "cloud_essd"
+
+  tags = local.tags
 }
-数据库与账号
-resource "alicloud_db_database" "pgdb" {
+
+# 一个示例数据库和账号
+resource "alicloud_rds_account" "pgadmin" {
+  db_instance_id   = alicloud_db_instance.pg.id
+  account_name     = "pgadmin"
+  account_password = "P@ssw0rd-ChangeMe"
+}
+
+resource "alicloud_rds_database" "app" {
   instance_id = alicloud_db_instance.pg.id
   name        = "appdb"
   character_set_name = "UTF8"
-}
-resource "alicloud_db_account" "pguser" {
-  instance_id = alicloud_db_instance.pg.id
-  name        = "appuser"
-  password    = "ChangeMe_123!"  # 改成 TFC Sensitive 变量更安全
-  type        = "Normal"
-}
-resource "alicloud_db_account_privilege" "pggrant" {
-  instance_id  = alicloud_db_instance.pg.id
-  account_name = alicloud_db_account.pguser.name
-  db_name      = alicloud_db_database.pgdb.name
-  privilege    = "ReadWrite"
 }
