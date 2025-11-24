@@ -49,6 +49,13 @@ variable "ecs_image_id" {
   default     = ""
 }
 
+# OSS
+variable "oss_redundancy_type" {
+  type        = string
+  description = "OSS 冗余类型：LRS(本地) 或 ZRS(区域)"
+  default     = "LRS"
+}
+
 # RDS PostgreSQL
 variable "pg_engine_version" {
   type    = string
@@ -82,3 +89,4 @@ variable "enable_waf" {
   type    = bool
   default = false
 }
+
