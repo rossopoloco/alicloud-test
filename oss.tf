@@ -1,6 +1,7 @@
 resource "alicloud_oss_bucket" "this" {
   bucket = "${var.name_prefix}-${var.env}-${random_pet.suffix.id}"
   storage_class = "Standard"
+  redundancy_type = var.oss_redundancy_type   # 关键：LRS / ZRS
 
   tags = local.tags
 }
@@ -18,4 +19,5 @@ resource "alicloud_oss_bucket" "this" {
 #    }
 #  }
 #}
+
 
