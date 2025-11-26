@@ -84,9 +84,15 @@ variable "alb_bandwidth_mbps" {
   default = 10
 }
 
+variable "alb_listener_port" {
+  type    = number
+  default = 80
+}
+
 # WAF（占位）
 variable "enable_waf" {
   type    = bool
   default = false
 }
+
 
