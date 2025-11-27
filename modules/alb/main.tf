@@ -9,6 +9,11 @@ resource "alicloud_alb_load_balancer" "this" {
   vpc_id                = var.vpc_id
   load_balancer_edition = "Standard"
 
+  # ✅ 新版必须：计费配置。按量付费即可。
+  load_balancer_billing_config {
+    pay_type = "PayAsYouGo"
+  }
+
   # 至少需要一个可用区映射
   zone_mappings {
     zone_id    = var.zone_id
