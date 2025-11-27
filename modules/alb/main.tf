@@ -1,3 +1,7 @@
+############################
+# Application Load Balancer
+############################
+
 # modules/alb/main.tf
 resource "alicloud_alb_load_balancer" "this" {
   # 名称 / 基本属性
@@ -24,4 +28,55 @@ resource "alicloud_alb_load_balancer" "this" {
     Project = var.name_prefix
     Env     = var.env
   }
+}
+
+# 后端 Server Group（把传入的 ECS 都挂在 80 端口）
+resource "alicloud_alb_server_group" "this" {
+  server_group_name = "${var.name}-sg"
+  vpc_id            = var.vpc_id
+  protocol          = "HTTP"
+  scheduler         = "Wrr"
+
+  health_check_config {
+    health_check_enabled      = true
+    health_check_protocol     = "HTTP"
+    health_check_method       = "GET"
+    health_check_path         = "/"
+    healthy_threshold         = 3
+    unhealthy_threshold       = 3
+    health_check_connect_port = 80
+    health_check_interval     = 5
+    health_check_timeout      = 3
+  }
+
+  dynamic "servers" {
+    for_each = toset(var.server_instance_ids)
+    content {
+      server_id   = servers.value
+      server_type = "Ecs"
+      port        = 80
+      weight      = 100
+    }
+  }
+
+  tags = var.tags
+}
+
+# 7 层监听（HTTP: 80）-> 转发到上面的后端组
+resource "alicloud_alb_listener" "http" {
+  load_balancer_id  = alicloud_alb_load_balancer.this.id
+  listener_protocol = "HTTP"
+  listener_port     = var.listener_port
+
+  default_actions {
+    type = "ForwardGroup"
+    forward_group_config {
+      server_group_tuples {
+        server_group_id = alicloud_alb_server_group.this.id
+        weight          = 100
+      }
+    }
+  }
+
+  tags = var.tags
 }
