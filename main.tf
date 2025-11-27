@@ -14,12 +14,11 @@ module "alb" {
   source = "./modules/alb"
   count  = var.enable_alb ? 1 : 0
 
-  name_prefix = var.name_prefix
+  name       = "${var.name}-${var.env}-alb"
+  vpc_id     = alicloud_vpc.this.id
+  vswitch_id = alicloud_vswitch.this.id
+  zone_id    = data.alicloud_zones.this.zones[0].id
   env         = var.env
-
-  vpc_id      = alicloud_vpc.this.id
-  zone_id     = data.alicloud_zones.this.zones[0].id
-  vswitch_id  = alicloud_vswitch.this.id
 
   listener_port        = var.alb_listener_port
   backend_port         = 80
@@ -27,3 +26,4 @@ module "alb" {
 
   tags = local.tags
 }
+
