@@ -1,41 +1,41 @@
-variable "name_prefix" {
-  type = string
-}
-
-variable "env" {
-  type = string
+variable "name" {
+  type        = string
+  description = "ALB name"
 }
 
 variable "vpc_id" {
-  type = string
+  type        = string
+  description = "VPC ID"
 }
 
 variable "vswitch_id" {
-  type = string
+  type        = string
+  description = "VSwitch ID for ALB zone mapping"
 }
 
 variable "zone_id" {
-  type = string
+  type        = string
+  description = "Zone ID (e.g., cn-wulanchabu-a)"
 }
 
-variable "bandwidth_mbps" {
-  type    = number
-  default = 10
-}
-
-variable "listener_port" {
-  type    = number
-  default = 80
+variable "alb_sg_id" {
+  type        = string
+  description = "Security Group ID used by ALB"
 }
 
 variable "server_instance_ids" {
   type        = list(string)
-  description = "ECS 实例 ID 列表，将被挂到 ALB 后端组 80 端口"
   default     = []
+  description = "ECS instance IDs to register in ALB server group"
+}
+
+variable "listener_port" {
+  type        = number
+  default     = 80
+  description = "ALB listener port"
 }
 
 variable "tags" {
   type        = map(string)
-  description = "统一打到 ALB 相关资源上的标签"
   default     = {}
 }
