@@ -1,5 +1,6 @@
-variable "name_prefix" { type = string }
+variable "name" { type = string }
 variable "env"         { type = string }
+variable "tags"      { type = map(string) }
 
 variable "vpc_id"     { type = string }
 variable "zone_id"    { type = string }
