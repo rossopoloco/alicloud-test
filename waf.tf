@@ -8,7 +8,7 @@ module "waf" {
 
   # 使用官方社区模块（基于阿里云 Terraform Provider）
   source  = "terraform-alicloud-modules/waf/alicloud"
-  version = "~> 1.7.0"
+  version = "1.1.0"
 
   # 只创建 WAF 实例（域名可后续再加）
   create_waf_instance = true
@@ -34,3 +34,4 @@ module "waf" {
   #   }
   # ]
 }
+
