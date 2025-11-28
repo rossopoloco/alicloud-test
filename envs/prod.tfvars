@@ -14,4 +14,9 @@ pg_storage_gib       = 100
 enable_alb           = true
 enable_waf           = true
 
+# —— 切到 Windows 2025 —— 
+ecs_image_id = "win2025_24H2_x64_dtc_en-us_40G_uefi_alibase_20251112.vhd"  # ← 用你复制的那个ID替换
+ecs_password = "Strong.P@ssw0rd-2025!"                                 # 8–30位，至少三类字符
+open_rdp     = true                                                    # 需要远程桌面就先开
+
 
