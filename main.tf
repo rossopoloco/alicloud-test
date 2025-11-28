@@ -33,11 +33,3 @@ module "alb" {
 
   tags = local.tags
 }
-
-module "waf" {
-  count  = var.enable_waf ? 1 : 0
-  source = "./modules/waf"
-  name_prefix = var.name_prefix
-  env         = var.env
-  # 其它 WAF 需要的入参（如果暂时没接入域名，可先留默认/占位，count=false 时不会创建）
-}
