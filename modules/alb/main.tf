@@ -78,7 +78,7 @@ resource "alicloud_alb_listener" "http" {
     forward_group_config {
       server_group_tuples {
         server_group_id = alicloud_alb_server_group.ecs.id
-        weight          = 100
+        # weight          = 100
       }
     }
   }
