@@ -95,4 +95,18 @@ variable "enable_waf" {
   default = false
 }
 
+# Windows 实例登录密码（Linux 也可用密码登陆，便于统一处理）
+variable "ecs_password" {
+  type        = string
+  description = "Password for Administrator/root (8–30位；含大小写、数字、特殊字符)."
+  default     = ""
+  sensitive   = true
+}
+
+# 是否放开 RDP(3389) —— 仅在需要远程桌面时开启
+variable "open_rdp" {
+  type    = bool
+  default = false
+}
+
 
