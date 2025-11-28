@@ -18,7 +18,7 @@ resource "alicloud_security_group" "this" {
   tags   = local.tags
 }
 
-# 允许 SSH 和 HTTP/HTTPS（示例）
+# 允许 SSH 和 HTTP/HTTPS
 resource "alicloud_security_group_rule" "ingress_ssh" {
   type              = "ingress"
   ip_protocol       = "tcp"
@@ -41,6 +41,18 @@ resource "alicloud_security_group_rule" "ingress_web" {
   cidr_ip           = "0.0.0.0/0"
 }
 
+resource "alicloud_security_group_rule" "ingress_rdp" {
+  count             = var.open_rdp ? 1 : 0
+  type              = "ingress"
+  ip_protocol       = "tcp"
+  nic_type          = "intranet"
+  policy            = "accept"
+  port_range        = "3389/3389"
+  priority          = 3
+  security_group_id = alicloud_security_group.this.id
+  cidr_ip           = "0.0.0.0/0"   # 生产建议收窄到公司出口IP段
+}
+
 # EIP（公网出口）
 resource "alicloud_eip_address" "this" {
   address_name = "${var.name_prefix}-${var.env}-eip"
@@ -48,4 +60,5 @@ resource "alicloud_eip_address" "this" {
   internet_charge_type = "PayByTraffic"
   tags = local.tags
 }
+
 
