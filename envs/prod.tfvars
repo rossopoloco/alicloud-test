@@ -12,4 +12,6 @@ pg_instance_class    = "pg.n4.2c.2m" # 17 HA
 pg_storage_gib       = 100
 
 enable_alb           = true
+enable_waf           = true
+
 
