@@ -11,7 +11,7 @@ module "waf" {
   version = "1.1.0"
 
   # 只创建 WAF 实例（域名可后续再加）
-  create_waf_instance = true
+  #create_waf_instance = true
 
   # 按你的命名规则与标签
   instance_name = "${var.name_prefix}-${var.env}-waf"
@@ -34,4 +34,5 @@ module "waf" {
   #   }
   # ]
 }
+
 
