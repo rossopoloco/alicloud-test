@@ -14,8 +14,8 @@ module "waf" {
   #create_waf_instance = true
 
   # 按你的命名规则与标签
-  instance_name = "${var.name_prefix}-${var.env}-waf"
-  tags          = local.tags
+  #instance_name = "${var.name_prefix}-${var.env}-waf"
+  #tags          = local.tags
 
   # 规格：对应你表格里的 “WAF Enhancement100 QPS/Min”
   # 阿里云模块里常用的 package_code 示例有 version_1~version_5（不同区域略有差异）
@@ -34,5 +34,6 @@ module "waf" {
   #   }
   # ]
 }
+
 
 
