@@ -40,7 +40,7 @@ variable "ecs_instance_count" {
 variable "ecs_instance_type" {
   type        = string
   # 你表里的：ecs.u1-c1m4.large  (2vCPU/8GiB)
-  default     = "ecs.u1-c1m4.large"
+  default     = "ecs.u2a-c1m4.large"
 }
 
 variable "ecs_image_id" {
@@ -108,5 +108,6 @@ variable "open_rdp" {
   type    = bool
   default = false
 }
+
 
 
