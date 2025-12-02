@@ -29,7 +29,8 @@ module "alb" {
   alb_server_port     = 80
   alb_bandwidth_mbps  = var.alb_bandwidth_mbps
 
-  backend_ecs_ids = [for i in alicloud_instance.ecs : i.id]
+  #backend_ecs_ids = [for i in alicloud_instance.ecs : i.id]
 
   tags = local.tags
 }
+
