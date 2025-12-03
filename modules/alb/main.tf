@@ -4,6 +4,7 @@ resource "alicloud_alb_load_balancer" "this" {
   address_type          = "Internet"
   vpc_id                = var.vpc_id
   load_balancer_edition = "Standard"
+  address_allocated_mode = "Fixed"
 
   # 计费：按量
   load_balancer_billing_config {
