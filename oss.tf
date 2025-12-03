@@ -1,10 +1,10 @@
-#resource "alicloud_oss_bucket" "this" {
-#  bucket = "${var.name_prefix}-${var.env}-${random_pet.suffix.id}"
-#  storage_class = "Standard"
-#  redundancy_type = var.oss_redundancy_type   # 关键：LRS / ZRS
+resource "alicloud_oss_bucket" "this" {
+  bucket = "${var.name_prefix}-${var.env}-${random_pet.suffix.id}"
+  storage_class = "Standard"
+  redundancy_type = var.oss_redundancy_type   # 关键：LRS / ZRS
 
-#  tags = local.tags
-#}
+  tags = local.tags
+}
 
 ## 示例生命周期（把 30 天未访问的对象转IA，可按需调整）
 #resource "alicloud_oss_bucket_lifecycle" "this" {
@@ -19,6 +19,5 @@
 #    }
 #  }
 #}
-
 
 
