@@ -25,6 +25,12 @@ variable "vsw_cidr" {
   default     = "10.20.1.0/24"
 }
 
+# 是否创建独立 EIP（默认不创建）
+variable "enable_eip" {
+  type    = bool
+  default = false
+}
+
 variable "eip_bandwidth_mbps" {
   type        = number
   description = "Public EIP bandwidth cap"
@@ -40,7 +46,7 @@ variable "ecs_instance_count" {
 variable "ecs_instance_type" {
   type        = string
   # 你表里的：ecs.u1-c1m4.large  (2vCPU/8GiB)
-  default     = "ecs.u1-c1m4.large"
+  default     = "ecs.u2a-c1m4.large"
 }
 
 variable "ecs_image_id" {
@@ -48,6 +54,38 @@ variable "ecs_image_id" {
   description = "Image id; empty to use latest Ubuntu 22.04"
   default     = ""
 }
+
+# ===== ECS 计费方式相关变量（新增） =====
+variable "ecs_charge_type" {
+  type        = string
+  description = "ECS计费方式：PostPaid(按量) | PrePaid(包年包月)"
+  default     = "PostPaid"
+}
+
+variable "ecs_period" {
+  type        = number
+  description = "包年包月的周期长度：单位与 period_unit 搭配（常用：1、12、24、36）"
+  default     = 12
+}
+
+variable "ecs_period_unit" {
+  type        = string
+  description = "周期单位：Month（阿里云目前 ECS 预付费常用月粒度）"
+  default     = "Month"
+}
+
+variable "ecs_auto_renew" {
+  type        = bool
+  description = "是否自动续费（仅 PrePaid 生效）"
+  default     = false
+}
+
+variable "ecs_auto_renew_period" {
+  type        = number
+  description = "自动续费周期（月）。仅当 ecs_auto_renew = true 时有效"
+  default     = 1
+}
+
 
 # OSS
 variable "oss_redundancy_type" {
@@ -71,6 +109,41 @@ variable "pg_instance_class" {
 variable "pg_storage_gib" {
   type    = number
   default = 20
+}
+
+# RDS Edition（Basic | HighAvailability）
+variable "pg_category" {
+  type        = string
+  description = "RDS Edition: Basic or HighAvailability"
+  default     = "Basic"
+}
+
+# RDS 计费方式：PrePaid(包年包月) | PostPaid(按量)
+variable "pg_charge_type" {
+  type        = string
+  description = "RDS charge type: PrePaid | PostPaid"
+  default     = "PostPaid"
+}
+
+# 仅 PrePaid 生效 —— 订阅周期（月）
+variable "pg_period" {
+  type        = number
+  description = "PrePaid period in months (1–9, 12, 24, 36)"
+  default     = 12
+}
+
+# 是否自动续费（仅 PrePaid）
+variable "pg_auto_renew" {
+  type        = bool
+  description = "Enable auto renew for PrePaid"
+  default     = false
+}
+
+# 自动续费周期（月，配合 auto_renew）
+variable "pg_auto_renew_period" {
+  type        = number
+  description = "Auto renew period in months"
+  default     = 1
 }
 
 # ALB
@@ -108,7 +181,5 @@ variable "open_rdp" {
   type    = bool
   default = false
 }
-
-
 
 
