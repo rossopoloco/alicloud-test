@@ -54,12 +54,12 @@ resource "alicloud_security_group_rule" "ingress_rdp" {
 }
 
 # EIP（公网出口）
-#resource "alicloud_eip_address" "this" {
-#  address_name = "${var.name_prefix}-${var.env}-eip"
-#  bandwidth    = var.eip_bandwidth_mbps
-#  internet_charge_type = "PayByTraffic"
-#  tags = local.tags
-#}
-
+resource "alicloud_eip_address" "this" {
+  count                = var.enable_eip ? 1 : 0
+  address_name = "${var.name_prefix}-${var.env}-eip"
+  bandwidth    = var.eip_bandwidth_mbps
+  internet_charge_type = "PayByTraffic"
+  tags = local.tags
+}
 
 
