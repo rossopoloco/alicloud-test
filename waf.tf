@@ -11,11 +11,14 @@ module "waf" {
   version = "1.1.0"
 
   # 只创建 WAF 实例（域名可后续再加）
-  #create_waf_instance = true
+  create_waf_instance = true
+  
+  # 有的模块默认就是按量，如模块支持可显式指定
+  # charge_type = "PostPay"  # ← 若 plan 报不认识该字段，就删掉这行即可
 
   # 按你的命名规则与标签
-  #instance_name = "${var.name_prefix}-${var.env}-waf"
-  #tags          = local.tags
+  instance_name = "${var.name_prefix}-${var.env}-waf"
+  tags          = local.tags
 
   # 规格：对应你表格里的 “WAF Enhancement100 QPS/Min”
   # 阿里云模块里常用的 package_code 示例有 version_1~version_5（不同区域略有差异）
@@ -34,6 +37,4 @@ module "waf" {
   #   }
   # ]
 }
-
-
 
